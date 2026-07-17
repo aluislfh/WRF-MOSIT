@@ -64,8 +64,8 @@ export METPLUS_Version=6.2.1
 export met_Version_number=12.2.1
 export met_VERSION_number=12.2
 export METPLUS_DATA=6.2
-export WRF_VERSION=4.7.1
-export WPS_VERSION=4.6.0
+export WRF_VERSION=4.8.0
+export WPS_VERSION=4.7.0
 export CMAQ_VERSION=5.5
 ```
 
@@ -109,27 +109,27 @@ export CMAQ_VERSION=5.5
 ---
 ### Software Packages
 - WRF
-    - WRF v4.7.1
-    - WPS v4.6.0
-    - WRF PLUS v4.7.1
-    - WRFDA 4DVAR v4.7.1
+    - WRF v4.8.0
+    - WPS v4.7.0
+    - WRF PLUS v4.8.0
+    - WRFDA 4DVAR v4.8.0
     - OBSGRID (Conda Installed - NCAR Command Language)    
 - WRF-CHEM
-    - WRF Chem w/KPP v4.7.1
-    - WPS v4.6.0
+    - WRF Chem w/KPP v4.8.0
+    - WPS v4.7.0
     - WRFDA Chem 3DVAR
     - OBSGRID (Conda Installed - NCAR Command Language) 
 - WRF-Hydro Standalone
     - WRF-Hydro v5.4
 - WRF-Hydro Coupled
     - WRF-Hydro v5.4
-    - WRF v4.7.1
-    - WPS v4.6.0
+    - WRF v4.8.0
+    - WPS v4.7.0
     - OBSGRID (Conda Installed - NCAR Command Language) 
 - WRF-CMAQ
     - WRF v4.5.0
     - CMAQ v5.5
-    - WPS v4.6.0
+    - WPS v4.7.0
 - WRF-SFIRE
     - WRF-SFIRE v2
     - WPS v4.2

@@ -34,8 +34,8 @@ export Netcdf_C_Version=4.10.0
 export Netcdf_Fortran_Version=4.6.2
 export Netcdf_CXX_Version=4.3.1
 
-export WRF_VERSION=4.7.1
-export WPS_VERSION=4.6.0
+export WRF_VERSION=4.8.0
+export WPS_VERSION=4.7.0
 export CMAQ_VERSION=5.5
 
 export HYDRO_CROTON_TEST_CASE=5.4.0
@@ -2110,7 +2110,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$CMAQ_PICK" = "1" ]; then
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -2342,61 +2342,61 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$CMAQ_PICK" = "1" ]; then
 	cp bldit_project.csh bldit_project.csh.old # Create backup of build project script
 
 	# Set path to where CMAQ will be built
-	sed -i '19s|/home/username/path|"${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}|g' "${WRF_FOLDER}"/Downloads/CMAQ/bldit_project.csh
+	sed -i '19s|/home/username/path|"${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}|g' "${WRF_FOLDER}"/Downloads/CMAQ/bldit_project.csh
 	# Build CMAQ Project
 	./bldit_project.csh
 
-	cd "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}
+	cd "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}
 
 	cp config_cmaq.csh config_cmaq.csh.old # Create backup of configure script
 
-	# Sed statements to configure the Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}
-	sed -i '146s|netcdf_root_gcc|"${WRF_FOLDER}"/Libs/NETCDF|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '147s|ioapi_root_gcc|"${WRF_FOLDER}"/Downloads/ioapi|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '148s|WRF_ARCH|WRF_ARCH 34|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	# Sed statements to configure the Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}
+	sed -i '146s|netcdf_root_gcc|"${WRF_FOLDER}"/Libs/NETCDF|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '147s|ioapi_root_gcc|"${WRF_FOLDER}"/Downloads/ioapi|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '148s|WRF_ARCH|WRF_ARCH 34|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
 
 	# sed statements for paths in configure file
-	sed -i '151s|ioapi_inc_gcc|"${WRF_FOLDER}"/Downloads/ioapi/ioapi/fixed_src|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '152s|ioapi_lib_gcc|"${WRF_FOLDER}"/Downloads/ioapi/$BIN|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '153s|netcdf_lib_gcc |"${WRF_FOLDER}"/Libs/NETCDF/lib|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '154s|netcdf_inc_gcc|"${WRF_FOLDER}"/Libs/NETCDF/include|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '155s|netcdff_lib_gcc|"${WRF_FOLDER}"/Libs/NETCDF/lib|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '156s|netcdff_inc_gcc|"${WRF_FOLDER}"/Libs/NETCDF/include|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '157s|mpi_incl_gcc|"${WRF_FOLDER}"/Libs/MPICH|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '158s|mpi_lib_gcc|"${WRF_FOLDER}"/Libs/MPICH|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '151s|ioapi_inc_gcc|"${WRF_FOLDER}"/Downloads/ioapi/ioapi/fixed_src|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '152s|ioapi_lib_gcc|"${WRF_FOLDER}"/Downloads/ioapi/$BIN|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '153s|netcdf_lib_gcc |"${WRF_FOLDER}"/Libs/NETCDF/lib|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '154s|netcdf_inc_gcc|"${WRF_FOLDER}"/Libs/NETCDF/include|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '155s|netcdff_lib_gcc|"${WRF_FOLDER}"/Libs/NETCDF/lib|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '156s|netcdff_inc_gcc|"${WRF_FOLDER}"/Libs/NETCDF/include|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '157s|mpi_incl_gcc|"${WRF_FOLDER}"/Libs/MPICH|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '158s|mpi_lib_gcc|"${WRF_FOLDER}"/Libs/MPICH|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
 
 	# compile the Chemistry Transport Model (CCTM) preprocess
 
-	cd "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts
+	cd "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts
 
 	cp bldit_cctm.csh bldit_cctm.csh.old # make a back up copy of .csh script
 
 	# Sed statements for configuration
-	sed -i '74s|-j|-j $CPU_QUARTER_EVEN|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh # set multicore to half of available cpus
-	sed -i '84s|#set|set|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh                # build two way
-	sed -i '100s|v4.4|v4.5.1|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh            # change wrf version from 4.4 to ${WPS_VERSION}
+	sed -i '74s|-j|-j 1|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh # set multicore to half of available cpus
+	sed -i '84s|#set|set|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh                # build two way
+	sed -i '100s|v4.4|v${WRF_VERSION}|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh            # change wrf version from 4.4 to ${WRF_Version}
 
-	sed -i '440s| if ( $? != 0 ) then| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '441s|    set shaID   = "not_a_repo"| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '442s| endif| |g' "${WRF_FOLDER}"/Downloads/CMAQ//Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '792s|  if ($? == 0) then| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '794s|  endif| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '806s|--branch|--recurse-submodule --branch|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '823s|compile em_real|compile -j $CPU_QUARTER_EVEN em_real|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '440s| if ( $? != 0 ) then| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '441s|    set shaID   = "not_a_repo"| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '442s| endif| |g' "${WRF_FOLDER}"/Downloads/CMAQ//Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '792s|  if ($? == 0) then| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '794s|  endif| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '806s|--branch|--recurse-submodule --branch|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '823s|compile em_real|compile -j 1 em_real|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
 
 	# Build WRF-CMAQ
 	./bldit_cctm.csh gcc 2>&1 | tee bldit.cctm.twoway.gcc.log
 
 	# Move built folder to top level directory
 
-	mkdir "${WRF_FOLDER}"/WRF-4.5.1_CMAQv${CMAQ_VERSION}
+	mkdir "${WRF_FOLDER}"/WRF-${WRF_VERSION}_CMAQv${CMAQ_VERSION}
 
-	mv "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/BLD_WRFv4.5.1_CCTM_v55_gcc/* "${WRF_FOLDER}"/WRF-4.5.1_CMAQv${CMAQ_VERSION}
+	mv "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/BLD_WRFv${WRF_VERSION}_CCTM_v55_gcc/* "${WRF_FOLDER}"/WRF-${WRF_VERSION}_CMAQv${CMAQ_VERSION}
 
-	export WRF_DIR="${WRF_FOLDER}"/WRF-4.5.1_CMAQv${CMAQ_VERSION}
+	export WRF_DIR="${WRF_FOLDER}"/WRF-${WRF_VERSION}_CMAQv${CMAQ_VERSION}
 
 	# IF statement to check that all files were created.
-	cd "${WRF_FOLDER}"/WRF-4.5.1_CMAQv${CMAQ_VERSION}/main
+	cd "${WRF_FOLDER}"/WRF-${WRF_VERSION}_CMAQv${CMAQ_VERSION}/main
 	n=$(ls ./*.exe | wc -l)
 	if (($n >= 3)); then
 		echo "All expected files created."
@@ -2744,7 +2744,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$CMAQ_PICK" = "1" ]; then
 	export MPIF90=mpifort
 	export MPICC=mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC CXX=$MPICXX F90=$MPIF90 F77=$MPIF77 CFLAGS=$CFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC CXX=$MPICXX F90=$MPIF90 F77=$MPIF77 CFLAGS=$CFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -2765,7 +2765,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$CMAQ_PICK" = "1" ]; then
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 	echo $CFLAGS
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -2789,7 +2789,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$CMAQ_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 	echo $CFLAGS
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -2984,59 +2984,59 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$CMAQ_PICK" = "1" ]; then
 	cp bldit_project.csh bldit_project.csh.old # Create backup of build project script
 
 	# Set path to where CMAQ will be built
-	sed -i '19s|/home/username/path|"${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}|g' "${WRF_FOLDER}"/Downloads/CMAQ/bldit_project.csh
+	sed -i '19s|/home/username/path|"${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}|g' "${WRF_FOLDER}"/Downloads/CMAQ/bldit_project.csh
 	# Build CMAQ Project
 	./bldit_project.csh
 
-	cd "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}
+	cd "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}
 
 	cp config_cmaq.csh config_cmaq.csh.old # Create backup of configure script
 
-	# Sed statements to configure the Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}
-	sed -i '146s|netcdf_root_gcc|"${WRF_FOLDER}"/Libs/NETCDF|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '147s|ioapi_root_gcc|"${WRF_FOLDER}"/Downloads/ioapi|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '148s|WRF_ARCH|WRF_ARCH 34|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	# Sed statements to configure the Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}
+	sed -i '146s|netcdf_root_gcc|"${WRF_FOLDER}"/Libs/NETCDF|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '147s|ioapi_root_gcc|"${WRF_FOLDER}"/Downloads/ioapi|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '148s|WRF_ARCH|WRF_ARCH 34|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
 
 	# sed statements for paths in configure file
-	sed -i '151s|ioapi_inc_gcc|"${WRF_FOLDER}"/Downloads/ioapi/ioapi/fixed_src|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '152s|ioapi_lib_gcc|"${WRF_FOLDER}"/Downloads/ioapi/$BIN|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '153s|netcdf_lib_gcc |"${WRF_FOLDER}"/Libs/NETCDF/lib|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '154s|netcdf_inc_gcc|"${WRF_FOLDER}"/Libs/NETCDF/include|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '155s|netcdff_lib_gcc|"${WRF_FOLDER}"/Libs/NETCDF/lib|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '156s|netcdff_inc_gcc|"${WRF_FOLDER}"/Libs/NETCDF/include|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '157s|mpi_incl_gcc|"${WRF_FOLDER}"/Libs/MPICH|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '158s|mpi_lib_gcc|"${WRF_FOLDER}"/Libs/MPICH|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '151s|ioapi_inc_gcc|"${WRF_FOLDER}"/Downloads/ioapi/ioapi/fixed_src|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '152s|ioapi_lib_gcc|"${WRF_FOLDER}"/Downloads/ioapi/$BIN|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '153s|netcdf_lib_gcc |"${WRF_FOLDER}"/Libs/NETCDF/lib|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '154s|netcdf_inc_gcc|"${WRF_FOLDER}"/Libs/NETCDF/include|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '155s|netcdff_lib_gcc|"${WRF_FOLDER}"/Libs/NETCDF/lib|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '156s|netcdff_inc_gcc|"${WRF_FOLDER}"/Libs/NETCDF/include|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '157s|mpi_incl_gcc|"${WRF_FOLDER}"/Libs/MPICH|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '158s|mpi_lib_gcc|"${WRF_FOLDER}"/Libs/MPICH|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
 
 	# compile the Chemistry Transport Model (CCTM) preprocess
 
-	cd "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts
+	cd "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts
 
 	cp bldit_cctm.csh bldit_cctm.csh.old # make a back up copy of .csh script
 
 	# Sed statements for configuration
-	sed -i '74s|-j|-j $CPU_QUARTER_EVEN|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh # set multicore to half of available cpus
-	sed -i '84s|#set|set|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh                # build two way
-	sed -i '100s|v4.4|v4.5.1|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh            # change wrf version from 4.4 to ${WPS_VERSION}
+	sed -i '74s|-j|-j $CPU_QUARTER_EVEN|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh # set multicore to half of available cpus
+	sed -i '84s|#set|set|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh                # build two way
+	sed -i '100s|v4.4|v${WRF_VERSION}|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh            # change wrf version from 4.4 to ${WPS_VERSION}
 
-	sed -i '440s| if ( $? != 0 ) then| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '441s|    set shaID   = "not_a_repo"| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '442s| endif| |g' "${WRF_FOLDER}"/Downloads/CMAQ//Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '792s|  if ($? == 0) then| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '794s|  endif| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '806s|--branch|--recurse-submodule --branch|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '823s|compile em_real|compile -j $CPU_QUARTER_EVEN em_real|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '440s| if ( $? != 0 ) then| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '441s|    set shaID   = "not_a_repo"| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '442s| endif| |g' "${WRF_FOLDER}"/Downloads/CMAQ//Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '792s|  if ($? == 0) then| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '794s|  endif| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '806s|--branch|--recurse-submodule --branch|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '823s|compile em_real|compile -j $CPU_QUARTER_EVEN em_real|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
 	# Build WRF-CMAQ
 	./bldit_cctm.csh gcc 2>&1 | tee bldit.cctm.twoway.gcc.log
 
 	# Move built folder to top level directory
-	mkdir "${WRF_FOLDER}"/WRF-4.5.1_CMAQv${CMAQ_VERSION}
+	mkdir "${WRF_FOLDER}"/WRF-${WRF_VERSION}_CMAQv${CMAQ_VERSION}
 
-	mv "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/BLD_WRFv4.5.1_CCTM_v55_gcc/* "${WRF_FOLDER}"/WRF-4.5.1_CMAQv${CMAQ_VERSION}
+	mv "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/BLD_WRFv${WRF_VERSION}_CCTM_v55_gcc/* "${WRF_FOLDER}"/WRF-${WRF_VERSION}_CMAQv${CMAQ_VERSION}
 
-	export WRF_DIR="${WRF_FOLDER}"/WRF-4.5.1_CMAQv${CMAQ_VERSION}
+	export WRF_DIR="${WRF_FOLDER}"/WRF-${WRF_VERSION}_CMAQv${CMAQ_VERSION}
 
 	# IF statement to check that all files were created.
-	cd "${WRF_FOLDER}"/WRF-4.5.1_CMAQv${CMAQ_VERSION}/main
+	cd "${WRF_FOLDER}"/WRF-${WRF_VERSION}_CMAQv${CMAQ_VERSION}/main
 	n=$(ls ./*.exe | wc -l)
 	if (($n >= 3)); then
 		echo "All expected files created."
@@ -3396,7 +3396,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$CMAQ_PICK" = "1" ]; then
 	export MPIF90=mpifort
 	export MPICC=mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC CXX=$MPICXX F90=$MPIF90 F77=$MPIF77 CFLAGS=$CFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC CXX=$MPICXX F90=$MPIF90 F77=$MPIF77 CFLAGS=$CFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -3417,7 +3417,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$CMAQ_PICK" = "1" ]; then
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 	echo $CFLAGS
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -3441,7 +3441,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$CMAQ_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 	echo $CFLAGS
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -3636,60 +3636,60 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$CMAQ_PICK" = "1" ]; then
 	cp bldit_project.csh bldit_project.csh.old # Create backup of build project script
 
 	# Set path to where CMAQ will be built
-	sed -i '19s|/home/username/path|"${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}|g' "${WRF_FOLDER}"/Downloads/CMAQ/bldit_project.csh
+	sed -i '19s|/home/username/path|"${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}|g' "${WRF_FOLDER}"/Downloads/CMAQ/bldit_project.csh
 	# Build CMAQ Project
 	./bldit_project.csh
 
-	cd "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}
+	cd "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}
 
 	cp config_cmaq.csh config_cmaq.csh.old # Create backup of configure script
 
-	# Sed statements to configure the Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}
-	sed -i '146s|netcdf_root_gcc|"${WRF_FOLDER}"/Libs/NETCDF|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '147s|ioapi_root_gcc|"${WRF_FOLDER}"/Downloads/ioapi|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '148s|WRF_ARCH|WRF_ARCH 34|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	# Sed statements to configure the Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}
+	sed -i '146s|netcdf_root_gcc|"${WRF_FOLDER}"/Libs/NETCDF|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '147s|ioapi_root_gcc|"${WRF_FOLDER}"/Downloads/ioapi|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '148s|WRF_ARCH|WRF_ARCH 34|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
 
 	# sed statements for paths in configure file
-	sed -i '151s|ioapi_inc_gcc|"${WRF_FOLDER}"/Downloads/ioapi/ioapi/fixed_src|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '152s|ioapi_lib_gcc|"${WRF_FOLDER}"/Downloads/ioapi/$BIN|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '153s|netcdf_lib_gcc |"${WRF_FOLDER}"/Libs/NETCDF/lib|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '154s|netcdf_inc_gcc|"${WRF_FOLDER}"/Libs/NETCDF/include|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '155s|netcdff_lib_gcc|"${WRF_FOLDER}"/Libs/NETCDF/lib|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '156s|netcdff_inc_gcc|"${WRF_FOLDER}"/Libs/NETCDF/include|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '157s|mpi_incl_gcc|"${WRF_FOLDER}"/Libs/MPICH|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
-	sed -i '158s|mpi_lib_gcc|"${WRF_FOLDER}"/Libs/MPICH|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '151s|ioapi_inc_gcc|"${WRF_FOLDER}"/Downloads/ioapi/ioapi/fixed_src|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '152s|ioapi_lib_gcc|"${WRF_FOLDER}"/Downloads/ioapi/$BIN|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '153s|netcdf_lib_gcc |"${WRF_FOLDER}"/Libs/NETCDF/lib|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '154s|netcdf_inc_gcc|"${WRF_FOLDER}"/Libs/NETCDF/include|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '155s|netcdff_lib_gcc|"${WRF_FOLDER}"/Libs/NETCDF/lib|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '156s|netcdff_inc_gcc|"${WRF_FOLDER}"/Libs/NETCDF/include|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '157s|mpi_incl_gcc|"${WRF_FOLDER}"/Libs/MPICH|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
+	sed -i '158s|mpi_lib_gcc|"${WRF_FOLDER}"/Libs/MPICH|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/config_cmaq.csh
 
 	# compile the Chemistry Transport Model (CCTM) preprocess
 
-	cd "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts
+	cd "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts
 
 	cp bldit_cctm.csh bldit_cctm.csh.old # make a back up copy of .csh script
 
 	# Sed statements for configuration
-	sed -i '74s|-j|-j $CPU_QUARTER_EVEN|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh # set multicore to half of available cpus
-	sed -i '84s|#set|set|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh                # build two way
-	sed -i '100s|v4.4|v4.5.1|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh            # change wrf version from 4.4 to ${WPS_VERSION}
+	sed -i '74s|-j|-j $CPU_QUARTER_EVEN|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh # set multicore to half of available cpus
+	sed -i '84s|#set|set|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh                # build two way
+	sed -i '100s|v4.4|v${WRF_VERSION}|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh            # change wrf version from 4.4 to ${WPS_VERSION}
 
-	sed -i '440s| if ( $? != 0 ) then| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '441s|    set shaID   = "not_a_repo"| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '442s| endif| |g' "${WRF_FOLDER}"/Downloads/CMAQ//Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '792s|  if ($? == 0) then| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '794s|  endif| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '806s|--branch|--recurse-submodule --branch|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
-	sed -i '823s|compile em_real|compile -j $CPU_QUARTER_EVEN em_real|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '440s| if ( $? != 0 ) then| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '441s|    set shaID   = "not_a_repo"| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '442s| endif| |g' "${WRF_FOLDER}"/Downloads/CMAQ//Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '792s|  if ($? == 0) then| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '794s|  endif| |g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '806s|--branch|--recurse-submodule --branch|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
+	sed -i '823s|compile em_real|compile -j $CPU_QUARTER_EVEN em_real|g' "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/bldit_cctm.csh
 
 	# Build WRF-CMAQ
 	./bldit_cctm.csh gcc 2>&1 | tee bldit.cctm.twoway.gcc.log
 
 	# Move built folder to top level directory
-	mkdir "${WRF_FOLDER}"/WRF-4.5.1_CMAQv${CMAQ_VERSION}
+	mkdir "${WRF_FOLDER}"/WRF-${WRF_VERSION}_CMAQv${CMAQ_VERSION}
 
-	mv "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv4.5.1-CMAQv${CMAQ_VERSION}/CCTM/scripts/BLD_WRFv4.5.1_CCTM_v55_gcc/* "${WRF_FOLDER}"/WRF-4.5.1_CMAQv${CMAQ_VERSION}
+	mv "${WRF_FOLDER}"/Downloads/CMAQ/Build_WRFv${WRF_VERSION}-CMAQv${CMAQ_VERSION}/CCTM/scripts/BLD_WRFv${WRF_VERSION}_CCTM_v55_gcc/* "${WRF_FOLDER}"/WRF-${WRF_VERSION}_CMAQv${CMAQ_VERSION}
 
-	export WRF_DIR="${WRF_FOLDER}"/WRF-4.5.1_CMAQv${CMAQ_VERSION}
+	export WRF_DIR="${WRF_FOLDER}"/WRF-${WRF_VERSION}_CMAQv${CMAQ_VERSION}
 
 	# IF statement to check that all files were created.
-	cd "${WRF_FOLDER}"/WRF-4.5.1_CMAQv${CMAQ_VERSION}/main
+	cd "${WRF_FOLDER}"/WRF-${WRF_VERSION}_CMAQv${CMAQ_VERSION}/main
 	n=$(ls ./*.exe | wc -l)
 	if (($n >= 3)); then
 		echo "All expected files created."
@@ -4053,7 +4053,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$SFIRE_PICK" = "1" ] && [ "$aarch64" != "
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -4722,7 +4722,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$SFIRE_PICK" = "1" ] && [ "$aarch64" = "1
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -5393,7 +5393,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$SFIRE_PICK" = "1" ]; then
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -5409,7 +5409,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$SFIRE_PICK" = "1" ]; then
 	export CPPFLAGS=-I$DIR/grib2/include
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
-	CC=$MPICC FC=$MPIFC CXX=$MPICXX F90=$MPIF90 F77=$MPIF77 CFLAGS=$CFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC CXX=$MPICXX F90=$MPIF90 F77=$MPIF77 CFLAGS=$CFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -5431,7 +5431,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$SFIRE_PICK" = "1" ]; then
 	export CPPFLAGS="-I$DIR/NETCDF/include -I$DIR/grib2/include"
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
-	CC=$MPICC FC=$MPIFC CXX=$MPICXX F90=$MPIF90 F77=$MPIF77 CFLAGS=$CFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC CXX=$MPICXX F90=$MPIF90 F77=$MPIF77 CFLAGS=$CFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -6084,7 +6084,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$SFIRE_PICK" = "1" ]; then
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -6100,7 +6100,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$SFIRE_PICK" = "1" ]; then
 	export CPPFLAGS=-I$DIR/grib2/include
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
-	CC=$MPICC FC=$MPIFC CXX=$MPICXX F90=$MPIF90 F77=$MPIF77 CFLAGS=$CFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC CXX=$MPICXX F90=$MPIF90 F77=$MPIF77 CFLAGS=$CFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -6122,7 +6122,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$SFIRE_PICK" = "1" ]; then
 	export CPPFLAGS="-I$DIR/NETCDF/include -I$DIR/grib2/include"
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
-	CC=$MPICC FC=$MPIFC CXX=$MPICXX F90=$MPIF90 F77=$MPIF77 CFLAGS=$CFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC CXX=$MPICXX F90=$MPIF90 F77=$MPIF77 CFLAGS=$CFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -6836,7 +6836,7 @@ if [ "$macos_64bit_GNU" = "1" ] && [ "$SFIRE_PICK" = "1" ] && [ "$MAC_CHIP" = "I
 	export MPICXX=$DIR/MPICH/bin/mpicxx
 
 	# drop --disable-utils (not recognized)
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	# build only libraries
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
@@ -6860,7 +6860,7 @@ if [ "$macos_64bit_GNU" = "1" ] && [ "$SFIRE_PICK" = "1" ] && [ "$MAC_CHIP" = "I
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -6884,7 +6884,7 @@ if [ "$macos_64bit_GNU" = "1" ] && [ "$SFIRE_PICK" = "1" ] && [ "$MAC_CHIP" = "I
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -7607,7 +7607,7 @@ if [ "$macos_64bit_GNU" = "1" ] && [ "$SFIRE_PICK" = "1" ] && [ "$MAC_CHIP" = "A
 	export MPICXX=$DIR/MPICH/bin/mpicxx
 
 	# drop --disable-utils (not recognized)
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	# build only libraries
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
@@ -7631,7 +7631,7 @@ if [ "$macos_64bit_GNU" = "1" ] && [ "$SFIRE_PICK" = "1" ] && [ "$MAC_CHIP" = "A
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -7655,7 +7655,7 @@ if [ "$macos_64bit_GNU" = "1" ] && [ "$SFIRE_PICK" = "1" ] && [ "$MAC_CHIP" = "A
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -8317,7 +8317,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -8336,7 +8336,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -8359,7 +8359,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -8493,7 +8493,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	echo " "
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	# GNU
 	################################################################################
@@ -8897,7 +8897,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -8916,7 +8916,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -8939,7 +8939,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -9073,7 +9073,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	echo " "
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	# GNU
 	################################################################################
@@ -9456,7 +9456,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ]; the
 	cd "${WRF_FOLDER}"/Downloads
 	env -u LD_LIBRARY_PATH tar -xzf pnetcdf-$Pnetcdf_Version.tar.gz
 	cd pnetcdf-$Pnetcdf_Version
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -9475,7 +9475,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ]; the
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --with-zlib=$DIR/grib2 --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --with-zlib=$DIR/grib2 --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -9498,7 +9498,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ]; the
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lm -lcurl -lhdf5_hl -lhdf5 -lz -ldl"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -9632,7 +9632,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ]; the
 	echo " "
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	# GNU
 	################################################################################
@@ -10083,7 +10083,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STA
 	export MPICXX=$DIR/MPICH/bin/mpicxx
 
 	# drop --disable-utils (not recognized)
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	# build only libraries
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
@@ -10107,7 +10107,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STA
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -10131,7 +10131,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STA
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -10287,7 +10287,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STA
 	fi
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	################################################################################
 	# Set up NETCDF environment variables
@@ -10741,7 +10741,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STA
 	export MPICXX=$DIR/MPICH/bin/mpicxx
 
 	# drop --disable-utils (not recognized)
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	# build only libraries
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
@@ -10765,7 +10765,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STA
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -10789,7 +10789,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STA
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -10945,7 +10945,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STA
 	fi
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	################################################################################
 
@@ -11327,7 +11327,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ]; then
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -11346,7 +11346,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -11369,7 +11369,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -11503,7 +11503,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ]; then
 	echo " "
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	# GNU
 	################################################################################
@@ -11904,7 +11904,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ]; then
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -11923,7 +11923,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -11946,7 +11946,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -12080,7 +12080,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ]; then
 	echo " "
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	# GNU
 	################################################################################
@@ -12446,7 +12446,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" ]; then
 	cd "${WRF_FOLDER}"/Downloads
 	env -u LD_LIBRARY_PATH tar -xzf pnetcdf-$Pnetcdf_Version.tar.gz
 	cd pnetcdf-$Pnetcdf_Version
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -12469,7 +12469,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -12627,7 +12627,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" ]; then
 	echo " "
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	# GNU
 	################################################################################
@@ -13030,7 +13030,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ] && [ "$aa
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -13049,7 +13049,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ] && [ "$aa
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -13072,7 +13072,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ] && [ "$aa
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -13395,7 +13395,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ] && [ "$aa
 
 	echo " "
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	################################################################################
 	# Set up NETCDF environment variables
@@ -13892,7 +13892,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ] && [ "$aa
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -13911,7 +13911,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ] && [ "$aa
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -13934,7 +13934,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ] && [ "$aa
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -14257,7 +14257,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ] && [ "$aa
 
 	echo " "
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	################################################################################
 	# Set up NETCDF environment variables
@@ -14763,7 +14763,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	export FFLAGS=""
 
 	export FCFLAGS=""
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -14785,7 +14785,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lm -ldl"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -15133,7 +15133,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	echo " "
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	################################################################################
 
@@ -15255,9 +15255,6 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 
 	env -u LD_LIBRARY_PATH ./clean -a
 
-	############################################################ NEEDS REVIEW IN FUTURE ##################################
-	sed -i '34s\($x =~ "ifort")\($x =~ /ifort|intel/)\g' "${WRF_FOLDER}"/WRF-${WRF_VERSION}/hydro/wrf_hydro_config
-	######################################################################################################################
 
 	if [ ${auto_config} -eq 1 ]; then
 		(
@@ -15330,7 +15327,6 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	cd "${WRF_FOLDER}"/WPS-${WPS_VERSION}
 	env -u LD_LIBRARY_PATH ./clean -a
 
-	sed -i '77s|real ::|integer ::|g' $"${WRF_FOLDER}"/WPS-${WPS_VERSION}/ungrib/src/rd_grib2.F
 
 	if [ ${auto_config} -eq 1 ]; then
 		echo 19 | ./configure 2>&1 | tee configure.log #Option 19 for intel and distributed memory
@@ -15714,7 +15710,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COU
 	export MPICXX=$DIR/MPICH/bin/mpicxx
 
 	# drop --disable-utils (not recognized)
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	# build only libraries
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
@@ -15738,7 +15734,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COU
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -15762,7 +15758,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COU
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -15996,7 +15992,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COU
 	echo " "
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	################################################################################
 	# Set up NETCDF environment variables
@@ -16558,7 +16554,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COU
 	export MPICXX=$DIR/MPICH/bin/mpicxx
 
 	# drop --disable-utils (not recognized)
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	# build only libraries
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
@@ -16582,7 +16578,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COU
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -16606,7 +16602,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COU
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -16840,7 +16836,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COU
 	echo " "
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	################################################################################
 	# Set up NETCDF environment variables
@@ -17330,7 +17326,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -17349,7 +17345,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -17372,7 +17368,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -17683,7 +17679,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	echo " "
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	################################################################################
 	# Set up NETCDF environment variables
@@ -18185,7 +18181,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -18204,7 +18200,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -18227,7 +18223,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -18483,7 +18479,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	export MPICXX=$DIR/MPICH/bin/mpicxx
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	################################################################################
 	# Set up NETCDF environment variables
@@ -18960,7 +18956,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	cd "${WRF_FOLDER}"/Downloads
 	env -u LD_LIBRARY_PATH tar -xzf pnetcdf-$Pnetcdf_Version.tar.gz
 	cd pnetcdf-$Pnetcdf_Version
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -18983,7 +18979,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -19262,7 +19258,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 	echo " "
 
 	############################# WRF HYDRO V5.4.0 #################################
-	# Version 5.3.0
+	# Version 5.4.0
 	# Standalone mode
 	################################################################################
 
@@ -19382,9 +19378,6 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFHYDRO_COUPLED_PICK" = "1" ]; then
 
 	env -u LD_LIBRARY_PATH ./clean -a
 
-	############################################################ NEEDS REVIEW IN FUTURE ##################################
-	sed -i '34s\($x =~ "ifort")\($x =~ /ifort|intel/)\g' "${WRF_FOLDER}"/WRF-${WRF_VERSION}/hydro/wrf_hydro_config
-	######################################################################################################################
 
 	if [ ${auto_config} -eq 1 ]; then
 		(
@@ -19796,7 +19789,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ] && [ "$aarch64" !=
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -19815,7 +19808,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ] && [ "$aarch64" !=
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -19838,7 +19831,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ] && [ "$aarch64" !=
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -20240,7 +20233,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ] && [ "$aarch64" !=
 	# (or a safe find fallback).
 	# --------------------------------------------------------
 
-	build_flex_from_source() {
+		build_flex_from_source() {
 		echo "[flex] Building flex 2.6.4 from source..."
 
 		# Clean old custom installs in WRF tree
@@ -20249,11 +20242,11 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ] && [ "$aarch64" !=
 
 		# Remove typical /usr/local flex files (not managed by apt/dnf)
 		echo "$PASSWD" | sudo -S bash -c '
-    rm -f /usr/local/bin/flex
-    rm -f /usr/local/lib/libfl.a /usr/local/lib/libfl.so /usr/local/lib/libfl.so.*
-    rm -f /usr/local/lib64/libfl.a /usr/local/lib64/libfl.so /usr/local/lib64/libfl.so.*
-    rm -f /usr/local/include/FlexLexer.h
-  '
+    	rm -f /usr/local/bin/flex
+    	rm -f /usr/local/lib/libfl.a /usr/local/lib/libfl.so /usr/local/lib/libfl.so.*
+    	rm -f /usr/local/lib64/libfl.a /usr/local/lib64/libfl.so /usr/local/lib64/libfl.so.*
+    	rm -f /usr/local/include/FlexLexer.h
+  	'
 
 		cd /tmp || exit 1
 		wget -q https://github.com/westes/flex/releases/download/v2.6.4/flex-2.6.4.tar.gz
@@ -20357,7 +20350,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ] && [ "$aarch64" !=
 
 	env -u LD_LIBRARY_PATH ./clean -a
 
-	sed -i '121s|$WKC_HOME/util/wkc/tuv_kpp FIRST ../../inc/|$WKC_HOME/util/wkc/tuv_kpp FIRST ../../../../inc/|g' "${WRF_FOLDER}"/WRF-${WRF_VERSION}/chem/KPP/compile_wkc
+
 
 	if [ ${auto_config} -eq 1 ]; then
 		(
@@ -20760,7 +20753,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ] && [ "$aarch64" = 
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -20779,7 +20772,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ] && [ "$aarch64" = 
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -20802,7 +20795,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ] && [ "$aarch64" = 
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -21321,7 +21314,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ] && [ "$aarch64" = 
 
 	env -u LD_LIBRARY_PATH ./clean -a
 
-	sed -i '121s|$WKC_HOME/util/wkc/tuv_kpp FIRST ../../inc/|$WKC_HOME/util/wkc/tuv_kpp FIRST ../../../../inc/|g' "${WRF_FOLDER}"/WRF-${WRF_VERSION}/chem/KPP/compile_wkc
+
 
 	if [ ${auto_config} -eq 1 ]; then
 		(
@@ -21722,7 +21715,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 	cd "${WRF_FOLDER}"/Downloads
 	env -u LD_LIBRARY_PATH tar -xzf pnetcdf-$Pnetcdf_Version.tar.gz
 	cd pnetcdf-$Pnetcdf_Version
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -21744,7 +21737,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -21771,7 +21764,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -22173,11 +22166,11 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 
 		# Remove typical /usr/local flex files (not managed by apt/dnf)
 		echo "$PASSWD" | sudo -S bash -c '
-    rm -f /usr/local/bin/flex
-    rm -f /usr/local/lib/libfl.a /usr/local/lib/libfl.so /usr/local/lib/libfl.so.*
-    rm -f /usr/local/lib64/libfl.a /usr/local/lib64/libfl.so /usr/local/lib64/libfl.so.*
-    rm -f /usr/local/include/FlexLexer.h
-  '
+    	rm -f /usr/local/bin/flex
+    	rm -f /usr/local/lib/libfl.a /usr/local/lib/libfl.so /usr/local/lib/libfl.so.*
+    	rm -f /usr/local/lib64/libfl.a /usr/local/lib64/libfl.so /usr/local/lib64/libfl.so.*
+    	rm -f /usr/local/include/FlexLexer.h
+		'
 
 		cd /tmp || exit 1
 		wget -q https://github.com/westes/flex/releases/download/v2.6.4/flex-2.6.4.tar.gz
@@ -22281,7 +22274,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 
 	env -u LD_LIBRARY_PATH ./clean -a
 
-	sed -i '121s|$WKC_HOME/util/wkc/tuv_kpp FIRST ../../inc/|$WKC_HOME/util/wkc/tuv_kpp FIRST ../../../../inc/|g' "${WRF_FOLDER}"/WRF-${WRF_VERSION}/chem/KPP/compile_wkc
+
 
 	if [ ${auto_config} -eq 1 ]; then
 		(
@@ -22378,7 +22371,6 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 	cd "${WRF_FOLDER}"/WPS-${WPS_VERSION}
 	env -u LD_LIBRARY_PATH ./clean -a
 
-	sed -i '77s|real ::|integer ::|g' $"${WRF_FOLDER}"/WPS-${WPS_VERSION}/ungrib/src/rd_grib2.F
 	sed -i '192s/x86_64/x86_64 aarch64/g' "${WRF_FOLDER}"/WPS-${WPS_VERSION}/arch/configure.defaults
 
 	if [ ${auto_config} -eq 1 ]; then
@@ -22760,7 +22752,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK
 	export MPICXX=$DIR/MPICH/bin/mpicxx
 
 	# drop --disable-utils (not recognized)
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	# build only libraries
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
@@ -22784,7 +22776,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -22808,7 +22800,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -23622,7 +23614,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK
 	export MPICXX=$DIR/MPICH/bin/mpicxx
 
 	# drop --disable-utils (not recognized)
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS="-std=gnu99 $CFLAGS" FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	# build only libraries
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
@@ -23646,7 +23638,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -23670,7 +23662,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -24417,7 +24409,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -24436,7 +24428,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -24459,7 +24451,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -24844,7 +24836,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 	# (or a safe find fallback).
 	# --------------------------------------------------------
 
-	build_flex_from_source() {
+		build_flex_from_source() {
 		echo "[flex] Building flex 2.6.4 from source..."
 
 		# Clean old custom installs in WRF tree
@@ -24853,11 +24845,11 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 
 		# Remove typical /usr/local flex files (not managed by apt/dnf)
 		echo "$PASSWD" | sudo -S bash -c '
-    rm -f /usr/local/bin/flex
-    rm -f /usr/local/lib/libfl.a /usr/local/lib/libfl.so /usr/local/lib/libfl.so.*
-    rm -f /usr/local/lib64/libfl.a /usr/local/lib64/libfl.so /usr/local/lib64/libfl.so.*
-    rm -f /usr/local/include/FlexLexer.h
-  '
+    	rm -f /usr/local/bin/flex
+    	rm -f /usr/local/lib/libfl.a /usr/local/lib/libfl.so /usr/local/lib/libfl.so.*
+    	rm -f /usr/local/lib64/libfl.a /usr/local/lib64/libfl.so /usr/local/lib64/libfl.so.*
+    	rm -f /usr/local/include/FlexLexer.h
+  		'
 
 		cd /tmp || exit 1
 		wget -q https://github.com/westes/flex/releases/download/v2.6.4/flex-2.6.4.tar.gz
@@ -24960,7 +24952,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 
 	env -u LD_LIBRARY_PATH ./clean -a
 
-	sed -i '121s|$WKC_HOME/util/wkc/tuv_kpp FIRST ../../inc/|$WKC_HOME/util/wkc/tuv_kpp FIRST ../../../../inc/|g' "${WRF_FOLDER}"/WRF-${WRF_VERSION}/chem/KPP/compile_wkc
+
 
 	if [ ${auto_config} -eq 1 ]; then
 		(
@@ -25374,7 +25366,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -25393,7 +25385,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -25416,7 +25408,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 	export CPPFLAGS="-I$DIR/NETCDF/include -I$DIR/grib2/include"
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -25774,7 +25766,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 	# (or a safe find fallback).
 	# --------------------------------------------------------
 
-	build_flex_from_source() {
+		build_flex_from_source() {
 		echo "[flex] Building flex 2.6.4 from source..."
 
 		# Clean old custom installs in WRF tree
@@ -25783,11 +25775,11 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 
 		# Remove typical /usr/local flex files (not managed by apt/dnf)
 		echo "$PASSWD" | sudo -S bash -c '
-    rm -f /usr/local/bin/flex
-    rm -f /usr/local/lib/libfl.a /usr/local/lib/libfl.so /usr/local/lib/libfl.so.*
-    rm -f /usr/local/lib64/libfl.a /usr/local/lib64/libfl.so /usr/local/lib64/libfl.so.*
-    rm -f /usr/local/include/FlexLexer.h
-  '
+    	rm -f /usr/local/bin/flex
+    	rm -f /usr/local/lib/libfl.a /usr/local/lib/libfl.so /usr/local/lib/libfl.so.*
+    	rm -f /usr/local/lib64/libfl.a /usr/local/lib64/libfl.so /usr/local/lib64/libfl.so.*
+    	rm -f /usr/local/include/FlexLexer.h
+  	'
 
 		cd /tmp || exit 1
 		wget -q https://github.com/westes/flex/releases/download/v2.6.4/flex-2.6.4.tar.gz
@@ -25890,7 +25882,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRFCHEM_PICK" = "1" ]; then
 
 	env -u LD_LIBRARY_PATH ./clean -a
 
-	sed -i '121s|$WKC_HOME/util/wkc/tuv_kpp FIRST ../../inc/|$WKC_HOME/util/wkc/tuv_kpp FIRST ../../../../inc/|g' "${WRF_FOLDER}"/WRF-${WRF_VERSION}/chem/KPP/compile_wkc
+
 
 	if [ ${auto_config} -eq 1 ]; then
 		(
@@ -26280,7 +26272,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFCHEM_PICK" ]; then
 	cd "${WRF_FOLDER}"/Downloads
 	env -u LD_LIBRARY_PATH tar -xzf pnetcdf-$Pnetcdf_Version.tar.gz
 	cd pnetcdf-$Pnetcdf_Version
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -26303,7 +26295,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFCHEM_PICK" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -26726,7 +26718,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFCHEM_PICK" ]; then
 	# (or a safe find fallback).
 	# --------------------------------------------------------
 
-	build_flex_from_source() {
+		build_flex_from_source() {
 		echo "[flex] Building flex 2.6.4 from source..."
 
 		# Clean old custom installs in WRF tree
@@ -26735,11 +26727,11 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFCHEM_PICK" ]; then
 
 		# Remove typical /usr/local flex files (not managed by apt/dnf)
 		echo "$PASSWD" | sudo -S bash -c '
-    rm -f /usr/local/bin/flex
-    rm -f /usr/local/lib/libfl.a /usr/local/lib/libfl.so /usr/local/lib/libfl.so.*
-    rm -f /usr/local/lib64/libfl.a /usr/local/lib64/libfl.so /usr/local/lib64/libfl.so.*
-    rm -f /usr/local/include/FlexLexer.h
-  '
+    	rm -f /usr/local/bin/flex
+    	rm -f /usr/local/lib/libfl.a /usr/local/lib/libfl.so /usr/local/lib/libfl.so.*
+    	rm -f /usr/local/lib64/libfl.a /usr/local/lib64/libfl.so /usr/local/lib64/libfl.so.*
+    	rm -f /usr/local/include/FlexLexer.h
+  		'
 
 		cd /tmp || exit 1
 		wget -q https://github.com/westes/flex/releases/download/v2.6.4/flex-2.6.4.tar.gz
@@ -26771,7 +26763,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFCHEM_PICK" ]; then
 		fi
 
 		echo "[flex] Source build complete: $(flex --version 2>/dev/null || echo flex)"
-	}
+		}
 
 	# Always do it
 	build_flex_from_source
@@ -26842,7 +26834,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRFCHEM_PICK" ]; then
 
 	env -u LD_LIBRARY_PATH ./clean -a
 
-	sed -i '121s|$WKC_HOME/util/wkc/tuv_kpp FIRST ../../inc/|$WKC_HOME/util/wkc/tuv_kpp FIRST ../../../../inc/|g' "${WRF_FOLDER}"/WRF-${WRF_VERSION}/chem/KPP/compile_wkc
+
 
 	if [ ${auto_config} -eq 1 ]; then
 		(
@@ -27287,7 +27279,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRF_PICK" = "1" ] && [ "$aarch64" != "1"
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -27306,7 +27298,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRF_PICK" = "1" ] && [ "$aarch64" != "1"
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -27329,7 +27321,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRF_PICK" = "1" ] && [ "$aarch64" != "1"
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -28188,7 +28180,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRF_PICK" = "1" ] && [ "$aarch64" = "1" 
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -28207,7 +28199,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRF_PICK" = "1" ] && [ "$aarch64" = "1" 
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -28230,7 +28222,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRF_PICK" = "1" ] && [ "$aarch64" = "1" 
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -28628,7 +28620,6 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRF_PICK" = "1" ] && [ "$aarch64" = "1" 
 	fi
 	cd "${WRF_FOLDER}"/WPS-${WPS_VERSION}
 	env -u LD_LIBRARY_PATH ./clean -a
-	sed -i '77s|real ::|integer ::|g' $"${WRF_FOLDER}"/WPS-${WPS_VERSION}/ungrib/src/rd_grib2.F
 	sed -i '192s/x86_64/x86_64 aarch64/g' "${WRF_FOLDER}"/WPS-${WPS_VERSION}/arch/configure.defaults
 
 	if [ ${auto_config} -eq 1 ]; then
@@ -29082,7 +29073,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRF_PICK" = "1" ]; then
 	cd "${WRF_FOLDER}"/Downloads
 	env -u LD_LIBRARY_PATH tar -xzf pnetcdf-$Pnetcdf_Version.tar.gz
 	cd pnetcdf-$Pnetcdf_Version
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -29104,7 +29095,7 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRF_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -29528,8 +29519,6 @@ if [ "$Ubuntu_64bit_Intel" = "1" ] && [ "$WRF_PICK" = "1" ]; then
 	fi
 	cd "${WRF_FOLDER}"/WPS-${WPS_VERSION}
 	env -u LD_LIBRARY_PATH ./clean -a
-
-	sed -i '77s|real ::|integer ::|g' "${WRF_FOLDER}"/WPS-${WPS_VERSION}/ungrib/src/rd_grib2.F
 
 	if [ ${auto_config} -eq 1 ]; then
 		echo 19 | ./configure 2>&1 | tee configure.log #Option 19 for intel and distributed memory
@@ -30051,7 +30040,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRF_PICK" = 
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -30070,7 +30059,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRF_PICK" = 
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -30094,7 +30083,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRF_PICK" = 
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -30921,7 +30910,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRF_PICK" = 
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -30940,7 +30929,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRF_PICK" = 
 	export CPPFLAGS=-I$DIR/grib2/include
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -30964,7 +30953,7 @@ if [ "$SYSTEMOS" = "MacOS" ] && [ "$macos_64bit_GNU" = "1" ] && [ "$WRF_PICK" = 
 	export CPPFLAGS="-I$DIR/NETCDF/include -I$DIR/grib2/include"
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -31725,7 +31714,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRF_PICK" = "1" ]; then
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -31744,7 +31733,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRF_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -31767,7 +31756,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$WRF_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -32619,7 +32608,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRF_PICK" = "1" ]; then
 	export MPIF90=$DIR/MPICH/bin/mpifort
 	export MPICC=$DIR/MPICH/bin/mpicc
 	export MPICXX=$DIR/MPICH/bin/mpicxx
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -32638,7 +32627,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRF_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -32661,7 +32650,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$WRF_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lpnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -33489,7 +33478,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRF_PICK" ]; then
 	cd "${WRF_FOLDER}"/Downloads
 	env -u LD_LIBRARY_PATH tar -xzf pnetcdf-$Pnetcdf_Version.tar.gz
 	cd pnetcdf-$Pnetcdf_Version
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/grib2 --enable-static --enable-shared 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -33512,7 +33501,7 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRF_PICK" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgcc -lm -ldl -lpnetcdf"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-pnetcdf --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -33937,8 +33926,6 @@ if [ "$RHL_64bit_Intel" = "1" ] && [ "$WRF_PICK" ]; then
 	fi
 	cd "${WRF_FOLDER}"/WPS-${WPS_VERSION}
 	env -u LD_LIBRARY_PATH ./clean -a
-
-	sed -i '77s|real ::|integer ::|g' "${WRF_FOLDER}"/WPS-${WPS_VERSION}/ungrib/src/rd_grib2.F
 
 	if [ ${auto_config} -eq 1 ]; then
 		echo 19 | ./configure 2>&1 | tee configure.log #Option 19 for intel and distributed memory
@@ -34425,7 +34412,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$COAWST_PICK" = "1" ] && [ "$aarch64" != 
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -34447,7 +34434,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$COAWST_PICK" = "1" ] && [ "$aarch64" != 
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -34463,7 +34450,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$COAWST_PICK" = "1" ] && [ "$aarch64" != 
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdff -lnetcdf  -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -34863,7 +34850,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$COAWST_PICK" = "1" ] && [ "$aarch64" = "
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -34885,7 +34872,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$COAWST_PICK" = "1" ] && [ "$aarch64" = "
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -34901,7 +34888,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$COAWST_PICK" = "1" ] && [ "$aarch64" = "
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdff -lnetcdf  -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -35303,7 +35290,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$COAWST_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -35325,7 +35312,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$COAWST_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -35341,7 +35328,7 @@ if [ "$RHL_64bit_GNU" = "1" ] && [ "$COAWST_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdff -lnetcdf  -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -35854,7 +35841,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$COAWST_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/grib2/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lhdf5_hl -lhdf5 -lz -lcurl -lgfortran -lgcc -lm -ldl"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --disable-dap --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-cdf5 --enable-parallel-tests --enable-logging 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -35876,7 +35863,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$COAWST_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdf -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log
@@ -35892,7 +35879,7 @@ if [ "$RHL_64bit_GNU" = "2" ] && [ "$COAWST_PICK" = "1" ]; then
 	export LDFLAGS="-L$DIR/NETCDF/lib -L$DIR/grib2/lib -Wl,-rpath,$DIR/NETCDF/lib -Wl,-rpath,$DIR/grib2/lib"
 	export LIBS="-lnetcdff -lnetcdf  -lcurl -lhdf5_hl -lhdf5 -lz -lm -ldl -lgcc -lgfortran"
 
-	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
+	CC=$MPICC FC=$MPIFC F77=$MPIF77 F90=$MPIF90 CXX=$MPICXX CFLAGS=$CFLAGS FFLAGS=$FFLAGS FCFLAGS=$FCFLAGS ./configure --prefix=$DIR/NETCDF --enable-netcdf-4 --enable-netcdf4 --enable-static --enable-shared --enable-parallel-tests --enable-logging --enable-hdf5 2>&1 | tee configure.log
 
 	make -j $CPU_QUARTER_EVEN 2>&1 | tee make.log
 	make -j $CPU_QUARTER_EVEN install 2>&1 | tee make.install.log

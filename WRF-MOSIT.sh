@@ -1,6 +1,8 @@
 #!/bin/bash
 ulimit -s unlimited
 
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+
 # Conda environment test
 if [ -n "$CONDA_DEFAULT_ENV" ]; then
 	echo "CONDA_DEFAULT_ENV is active: $CONDA_DEFAULT_ENV"
@@ -324,7 +326,7 @@ echo "Testing for storage space for installation."
 # Cross-platform disk space check (Linux + macOS)
 
 HOME_DIR="${HOME}"
-REQUIRED_GB=350
+REQUIRED_GB=150
 REQUIRED_KB=$((REQUIRED_GB * 1024 * 1024)) # 350 GB in KiB
 
 # df -k prints sizes in 1K blocks on both GNU (Linux) and BSD (macOS)
@@ -8141,6 +8143,8 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	)
 	mkdir $HOME/WRFHYDRO_STANDALONE
 	export WRF_FOLDER=$HOME/WRFHYDRO_STANDALONE
+	export CONDARC="${WRF_FOLDER}/.condarc"
+	printf '%s\n' 'channels:' '  - conda-forge' 'channel_priority: strict' 'auto_activate: false' > "$CONDARC"
 	export DIR="${WRF_FOLDER}"/Libs
 	cd "${WRF_FOLDER}"/
 	mkdir Downloads
@@ -8573,7 +8577,12 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	cd "${WRF_FOLDER}"/Downloads
 	wget -c https://github.com/NCAR/wrf_hydro_nwm_public/releases/download/v${HYDRO_CROTON_TEST_CASE}/croton_NY_training_example_v${HYDRO_CROTON_TEST_CASE_MINOR}.tar.gz
 	env -u LD_LIBRARY_PATH tar -xzf croton_NY_training_example_v${HYDRO_CROTON_TEST_CASE_MINOR}.tar.gz
-	mv example_case "${WRF_FOLDER}"/Hydro-Basecode
+	if [ -d "${WRF_FOLDER}/Hydro-Basecode/example_case" ]; then
+		cp -a example_case/. "${WRF_FOLDER}/Hydro-Basecode/example_case/"
+		rm -rf example_case
+	else
+		mv example_case "${WRF_FOLDER}"/Hydro-Basecode
+	fi
 
 	#Copy the *.TBL files to the example configuration directory:
 	cp "${WRF_FOLDER}"/Hydro-Basecode/wrf_hydro_nwm_public/build/Run/*.TBL "${WRF_FOLDER}"/Hydro-Basecode/example_case/NWM
@@ -8582,7 +8591,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	cp "${WRF_FOLDER}"/Hydro-Basecode/wrf_hydro_nwm_public/build/Run/wrf_hydro "${WRF_FOLDER}"/Hydro-Basecode/example_case/NWM
 
 	#From the example_case/Gridded directory, create a symlink:
-	ln -s "${WRF_FOLDER}"/Hydro-Basecode/example_case/FORCING "${WRF_FOLDER}"/Hydro-Basecode/example_case/NWM
+	ln -sfn "${WRF_FOLDER}"/Hydro-Basecode/example_case/FORCING "${WRF_FOLDER}"/Hydro-Basecode/example_case/NWM/FORCING
 
 	#Move to Gridded Folder
 	cd "${WRF_FOLDER}"/Hydro-Basecode/example_case/NWM
@@ -8614,7 +8623,7 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	########################### Test script for output data  ###################################
 
 	#Installing Miniconda3 to WRF directory and updating libraries
-	echo $PASSWD | sudo -S apt -y install python3-zstandard python3-zstd
+	echo $PASSWD | sudo -S apt -y install python3-zstd
 
 	export Miniconda_Install_DIR="${WRF_FOLDER}"/miniconda3
 
@@ -8631,50 +8640,40 @@ if [ "$Ubuntu_64bit_GNU" = "1" ] && [ "$WRFHYDRO_STANDALONE_PICK" = "1" ] && [ "
 	rm -rf $Miniconda_Install_DIR/miniconda.sh
 
 	export PATH="${WRF_FOLDER}"/miniconda3/bin:$PATH
+	# Keep Conda from loading a conflicting user-level .condarc.
+	export HOME="$WRF_FOLDER"
+	export CONDARC="$WRF_FOLDER/.condarc"
 
 	source $Miniconda_Install_DIR/etc/profile.d/conda.sh
-
-	$Miniconda_Install_DIR/bin/conda init bash
-
-	conda tos accept
-	conda config --add channels conda-forge
-	conda config --set auto_activate_base false
-	conda update -n root --all -y
 
 	##################### WRF Python           ##################
 	########### WRf-Python compiled via Conda  ##################
 	########### This is the preferred method by NCAR      ##################
 	##### https://wrf-python.readthedocs.io/en/latest/installation.html  ##################
 	source $Miniconda_Install_DIR/etc/profile.d/conda.sh
-	conda env create -f $HOME/WRF-MOSIT/wrf-python-stable.yml
-
-	######################### Climate Data Operators ############
-	######################### CDO compiled via Conda ###########
-	####################### This is the preferred method #######
-	################### https://bairdlangenbrunner.github.io/python-for-climate-scientists/conda/setting-up-conda-environments.html #######################
-
-	source $Miniconda_Install_DIR/etc/profile.d/conda.sh
-
-	conda create --name cdo_stable -y
-	conda activate cdo_stable
-	conda install -c conda-forge cdo -y
-	conda update --all -y
-	conda deactivate
-	conda deactivate
-	conda deactivate
+	conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+	conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+	WRF_PYTHON_ENV="$Miniconda_Install_DIR/envs/wrf-python"
+	if conda env list | grep -qE '^[[:space:]]*wrf-python[[:space:]]'; then
+		if ! conda env update --name wrf-python --file "$SCRIPT_DIR/wrf-python-stable.yml" --prune; then
+			conda install --name wrf-python python=3.11 pip -y
+		fi
+	else
+		if ! conda env create --name wrf-python --file "$SCRIPT_DIR/wrf-python-stable.yml"; then
+			conda env remove --name wrf-python --all -y 2>/dev/null || true
+			conda create --name wrf-python python=3.11 pip -y
+		fi
+	fi
+	"$WRF_PYTHON_ENV/bin/python" -m pip install --upgrade netCDF4 matplotlib numpy
 
 	echo " "
 
 	################ NEEDS TO BE IN Master folder #######################
-	cp $HOME/WRF-MOSIT/SurfaceRunoff.py "${WRF_FOLDER}"/Hydro-Basecode/example_case/NWM
+	cp "$SCRIPT_DIR/SurfaceRunoff.py" "${WRF_FOLDER}"/Hydro-Basecode/example_case/NWM
 
 	cd "${WRF_FOLDER}"/Hydro-Basecode/example_case/NWM
 
-	conda activate wrf-python
-	python3 SurfaceRunoff.py
-	conda deactivate
-	conda deactivate
-	conda deactivate
+	"$WRF_PYTHON_ENV/bin/python" SurfaceRunoff.py
 
 	if [ -f "SurfaceRunoff.pdf" ]; then
 		echo "SurfaceRunoff.pdf exists."

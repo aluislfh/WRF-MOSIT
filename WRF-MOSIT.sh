@@ -326,7 +326,7 @@ echo "Testing for storage space for installation."
 # Cross-platform disk space check (Linux + macOS)
 
 HOME_DIR="${HOME}"
-REQUIRED_GB=150
+REQUIRED_GB=350
 REQUIRED_KB=$((REQUIRED_GB * 1024 * 1024)) # 350 GB in KiB
 
 # df -k prints sizes in 1K blocks on both GNU (Linux) and BSD (macOS)

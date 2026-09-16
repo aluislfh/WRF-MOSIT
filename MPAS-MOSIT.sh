@@ -32,23 +32,11 @@ export Netcdf_C_Version=4.10.0
 export Netcdf_Fortran_Version=4.6.2
 export Metis_Version=5.1.0
 
-############################### Citation Requirement  ####################
+############################### Header ####################################
 echo " "
 echo " MPAS-MOSIT (Version 1.0.0) - MPAS Multi Operational System Install Toolkit"
+echo " Installing MPAS v${MPAS_VERSION} from https://github.com/MPAS-Dev/MPAS-Model"
 echo " "
-echo "Modeled after WRF-MOSIT by W. Hatheway (2023):"
-echo "Hatheway, W., Snoun, H., ur Rehman, H., & Mwanthi, A. WRF-MOSIT: a modular"
-echo "and cross-platform tool for configuring and installing the WRF model."
-echo "Earth Sci Inform (2023). https://doi.org/10.1007/s12145-023-01136-y"
-echo " "
-echo "Any usage or publication that incorporates or references this software"
-echo "must include the citation above, plus standard citation of the MPAS"
-echo "project (https://mpas-dev.github.io)."
-echo " "
-echo -e "\e[31mThis script installs the Model for Prediction Across Scales (MPAS)\e[0m"
-echo -e "\e[31mcomponents from https://github.com/MPAS-Dev/MPAS-Model (MPAS v${MPAS_VERSION})\e[0m"
-echo " "
-read -p "Press enter to continue"
 
 ############################### System Architecture Type #################
 # Determine if the system is 32 or 64-bit based on the architecture
@@ -840,6 +828,10 @@ rebuild_and_check() {
 
 build_mpas_core() {
 	local core="$1" exe="$2"
+	if [ -x "$MPAS_FOLDER/bin/$exe" ] && [ "${MPAS_FORCE_REBUILD:-0}" != "1" ]; then
+		echo "${exe} already built (${MPAS_FOLDER}/bin/${exe}); skipping. (MPAS_FORCE_REBUILD=1 to force)"
+		return 0
+	fi
 	log "Compiling MPAS core: ${core} -> ${exe} (PRECISION=${MPAS_PRECISION})"
 	cd "$MPAS_FOLDER/MPAS-Model" || return 1
 	make clean >/dev/null 2>&1 || true
@@ -1118,15 +1110,3 @@ echo "Install Start Time: ${start}"
 echo "Install End Time: ${end}"
 echo "Install Duration: $(($DIFF / 3600)) hours $((($DIFF % 3600) / 60)) minutes $(($DIFF % 60)) seconds"
 echo ""
-echo ""
-############################### Citation Requirement  ####################
-echo " "
-echo " MPAS-MOSIT (Version 1.0.0)"
-echo " "
-echo "It is important to note that any usage or publication that incorporates or"
-echo "references this software must include a proper citation to acknowledge"
-echo "the work of W. Hatheway (WRF-MOSIT) and the MPAS development teams."
-echo " "
-echo -e "\e[31mCitation: Hatheway, W., Snoun, H., ur Rehman, H., & Mwanthi, A. WRF-MOSIT: a modular and cross-platform tool for configuring and installing the WRF model [Computer software]. https://doi.org/10.1007/s12145-023-01136-y\e[0m"
-echo " "
-echo "MPAS-MOSIT is based on that design and installs: https://github.com/MPAS-Dev/MPAS-Model"

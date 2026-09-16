@@ -1,429 +1,307 @@
+# MOSIT — Multi Operational System Install Toolkit
 
-### Citation:
-Hatheway, W., Snoun, H., ur Rehman, H. et al. WRF-MOSIT: a modular and cross-platform tool for configuring and installing the WRF model. Earth Sci Inform (2023). https://doi.org/10.1007/s12145-023-01136-y
+**MOSIT** is a family of interactive BASH installers that build numerical
+weather/climate prediction software from source on 64-bit Linux (and macOS for
+WRF), handling every dependency automatically: compilers, MPI, I/O libraries,
+the model cores, pre/post-processing tools, and optional data-assimilation
+components.
 
----
-### WRF Multi Operational System Install Toolkit
-This is a BASH script that provides options to install the following Weather Research & Forecasting Model (WRF) packages in 64-bit systems:
+This repository ships two installers:
 
-- Weather Research & Forecasting Model (WRF-ARW)
-- Weather Research & Forecasting Model Chemistry (WRF-CHEM)
-- Weather Research & Forecasting Model Hydro Standalone (WRF-Hydro)
-- Weather Research & Forecasting Model Hydro Coupled w/ WRF (WRF-Hydro Coupled)
-- Weather Research & Forecasting Model CMAQ (WRF-CMAQ)
-- Weather Research & Forecasting Model Wildland Fire (WRF-SFIRE)
-- A Coupled-Ocean-Atmosphere-Wave-Sediment Transport Modeling System (COAWST)
+| Script          | Installs |
+| --------------- | -------- |
+| `WRF-MOSIT.sh`  | Weather Research & Forecasting family: WRF-ARW, WRF-Chem, WRF-Hydro (standalone & coupled), WRF-CMAQ, WRF-SFIRE, COAWST |
+| `MPAS-MOSIT.sh` | Model for Prediction Across Scales family: MPAS-Atmosphere, MPAS-Ocean, MPAS-Seaice, MPAS-Albany Land Ice — plus MPAS-Limited-Area, MPAS-Tools/geometric_features/pyremap, static datasets, and **MPAS-JEDI** (experimental) |
 
-- Basic Nesting is set up
----
-### System Requirements
-- 64-bit system
-    - Darwin (MacOS)
-    - Linux Debian Distro (Ubuntu, Mint, etc)
-    - Windows Subsystem for Linux (Debian Distro, Ubuntu, Mint, etc)
-    - Linux Fedora Distro (Centos, Rocky Linux, RHL, etc)
-- 350 Gigabyte (GB) of free storage space
----
-### Minimum Reccomended System Configuration
-- 16GB or more RAM
-- 8 or more CPU cores
+> The full original WRF-MOSIT documentation (including its complete reference
+> list) is preserved in [`docs/README-WRF-MOSIT-legacy.md`](docs/README-WRF-MOSIT-legacy.md).
 
 ---
-### WRF Folder Structure
-The default WRF folder is located at:
 
-```
-/home/<username>/<WRF software name>
-```
-
-Where:
-- `<username>` is your Linux/MacOS system username.
-- `<WRF software name>` can be one of:
-    - `WRF`
-    - `WRF_CHEM`
-    - `WRFHYDRO`
-    - `WRF_COUPLED`
-    - `WRF_SFIRE`
-    - `WRF_CMAQ`
-    - `COAWST`
-
-Example:
-
-```
-/home/johndoe/WRF_CHEM/
-/home/johndoe/WRFHYDRO_Coupled_Intel/
-```
-
-Update this path accordingly when configuring your environment variables or running tools.
-
----
-### Installed Version Information
+## Quick start
 
 ```bash
-export METPLUS_Version=6.2.1
-export met_Version_number=12.2.1
-export met_VERSION_number=12.2
-export METPLUS_DATA=6.2
-export WRF_VERSION=4.8.0
-export WPS_VERSION=4.7.0
-export CMAQ_VERSION=5.5
+cd $HOME
+sudo apt install git -y           # or: sudo dnf install git -y
+git clone https://github.com/HathewayWill/WRF-MOSIT.git
+cd WRF-MOSIT
+chmod +x *.sh
+
+./WRF-MOSIT.sh   2>&1 | tee WRF_MOSIT.log     # WRF family
+./MPAS-MOSIT.sh  2>&1 | tee MPAS_MOSIT.log    # MPAS family
 ```
 
----
-| OS / Model                     |      WRF-ARW |     WRF-CHEM | Hydro Standalone | Hydro Coupled |          **CMAQ** |    **SFIRE** |        **COAWST** |
-| ------------------------------ | -----------: | -----------: | ---------------: | ------------: | ----------------: | -----------: | ----------------: |
-| **Ubuntu/Debian (x86_64)**     |  GNU / Intel |  GNU / Intel |      GNU / Intel |   GNU / Intel |      **GNU only** | **GNU only** |       GNU / Intel |
-| **RHEL/Rocky/CentOS (x86_64)** |  GNU / Intel |  GNU / Intel |      GNU / Intel |   GNU / Intel |      **GNU only** | **GNU only** |       GNU / Intel |
-| **macOS (Intel/ARM)**          | **GNU only** | **GNU only** |     **GNU only** |  **GNU only** | **Not available** | **GNU only** | **Not available** |
-
-
----
-### Libraries Installed (Latest libraries as of 11/01/2025)
-- Libraries are manually installed in sub-folders utilizing either Intel or GNU Compilers.
-    - Libraries installed with GNU compilers
-        - zlib (1.3.2)
-        - MPICH (5.0.1)
-        - libpng (1.6.58)
-        - JasPer (1.900.1)
-        - HDF5 (1.14.6)
-        - PHDF5 (1.14.6)
-        - Parallel-NetCDF (1.14.1)
-        - NetCDF-C (4.10.0)
-        - NetCDF-Fortran (4.6.2)
-        - NetCDF-CXX (4.3.1)
-        - Miniconda
-    - Libraries installed with Intel compilers
-        - zlib (1.3.2)
-        - libpng (1.6.58)
-        - JasPer (1.900.1)
-        - HDF5 (1.14.6)
-        - PHDF5 (1.14.6)
-        - Parallel-NetCDF (1.14.1)
-        - NetCDF-C (4.10.0)
-        - NetCDF-Fortran (4.6.2)
-        - Miniconda
-        - Intel-Basekit
-        - Intel-HPCKIT
-        - Intel-Oneapi-Python
-
----
-### Software Packages
-- WRF
-    - WRF v4.8.0
-    - WPS v4.7.0
-    - WRF PLUS v4.8.0
-    - WRFDA 4DVAR v4.8.0
-    - OBSGRID (Conda Installed - NCAR Command Language)    
-- WRF-CHEM
-    - WRF Chem w/KPP v4.8.0
-    - WPS v4.7.0
-    - WRFDA Chem 3DVAR
-    - OBSGRID (Conda Installed - NCAR Command Language) 
-- WRF-Hydro Standalone
-    - WRF-Hydro v5.4
-- WRF-Hydro Coupled
-    - WRF-Hydro v5.4
-    - WRF v4.8.0
-    - WPS v4.7.0
-    - OBSGRID (Conda Installed - NCAR Command Language) 
-- WRF-CMAQ
-    - WRF v4.5.0
-    - CMAQ v5.5
-    - WPS v4.7.0
-- WRF-SFIRE
-    - WRF-SFIRE v2
-    - WPS v4.2
-- COAWST
----
-### Pre/Post Processing Packages Installed
-- WRF
-    - Development Testbed Center (DTC) Model Evaluation Tools (MET) v12.1.1
-    - Development Testbed Center (DTC) Enhanced Model Evaluation Tools (METplus) v6.1.0
-    - WRF-Python (Conda installed)
-    - OpenGrADS 
-    - GrADS 
-    - NCAR Command Langauge (Conda installed)
-    - Climate Data Operators (Conda installed)
-      
-- WRF-CHEM
-    - Development Testbed Center (DTC) Model Evaluation Tools (MET) v12.1.1
-    - Development Testbed Center (DTC) Enhanced Model Evaluation Tools (METplus) v6.1.0
-    - WRF-Python (Conda installed)
-    - OpenGrADS
-    - GrADS
-    - NCAR Command Langauge (Conda installed)
-    - Climate Data Operators (Conda installed)
-    - Prep-Chem-SRC v1.5 (GNU only)
-    - WRF CHEM Tools
-        - Mozbc
-        - Megan Bio Emiss
-        - Megan Bio Data
-        - Wes Coldens
-        - ANTHRO EMIS
-        - EDGAR HTAP
-        - EPA ANTHO EMIS
-        - UBC
-        - Aircraft
-        - FINN
-
-- WRF-Hydro Standalone
-    - Development Testbed Center (DTC) Model Evaluation Tools (MET) v12.1.1
-    - Development Testbed Center (DTC) Enhanced Model Evaluation Tools (METplus) v6.1.0
-    - WRF-GIS-Preprocessor (Conda installed)
-      
-- WRF-Hydo Coupled
-    - Development Testbed Center (DTC) Model Evaluation Tools (MET) v12.1.1
-    - Development Testbed Center (DTC) Enhanced Model Evaluation Tools (METplus) v6.1.0
-    - WRF-Python (Conda installed)
-    - OpenGrADS
-    - GrADS
-    - NCAR Command Langauge (Conda installed)
-    - Climate Data Operators (Conda installed)
-    - WRF-GIS-Preprocessor (Conda installed)
-      
- - WRF-SFIRE
-    - Development Testbed Center (DTC) Model Evaluation Tools (MET) v12.1.1
-    - Development Testbed Center (DTC) Enhanced Model Evaluation Tools (METplus) v6.1.0
-    - WRF-Python (Conda installed)
-    - OpenGrADS
-    - GrADS
-    - NCAR Command Langauge (Conda installed)
-    - Climate Data Operators (Conda installed)
-  
-- WRF-CMAQ
-    - Development Testbed Center (DTC) Model Evaluation Tools (MET) v12.1.1
-    - Development Testbed Center (DTC) Enhanced Model Evaluation Tools (METplus) v6.1.0
-    - WRF-Python (Conda installed)
-    - OpenGrADS
-    - GrADS
-    - NCAR Command Langauge (Conda installed)
-    - Climate Data Operators (Conda installed)
-
-- COAWST
-    - Development Testbed Center (DTC) Model Evaluation Tools (MET) v12.1.1
-    - Development Testbed Center (DTC) Enhanced Model Evaluation Tools (METplus) v6.1.0
-    - WRF-Python (Conda installed)
-    - OpenGrADS
-    - GrADS
-    - NCAR Command Langauge (Conda installed)
-    - Climate Data Operators (Conda installed)
-
----
-### MacOS Installation
-- Make sure to download and Homebrew before moving to installation.
-> cd $HOME
-
-> /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-
-> brew install git
-
-> git clone https://github.com/HathewayWill/WRF-MOSIT.git
-
-> cd $HOME/WRF-MOSIT
-
-> chmod 775 *.sh
-
-> ./WRF-MOSIT.sh 2>&1 | tee WRF_MOSIT.log
-
-### APT Installation
-- (Make sure to download folder into your Home Directory):
-> cd $HOME
-
-> sudo apt install git -y
-
-> git clone https://github.com/HathewayWill/WRF-MOSIT.git
-
-> cd $HOME/WRF-MOSIT
-
-> chmod 775 *.sh
-
-> ./WRF-MOSIT.sh 2>&1 | tee WRF_MOSIT.log
-
-
-### YUM/DNF Installation
-- (Make sure to download folder into your Home Directory):
-> cd $HOME
-
-> sudo (yum or dnf) install git -y
-
-> git clone https://github.com/HathewayWill/WRF-MOSIT.git
-
-> cd $HOME/WRF-MOSIT
-
-> chmod 775 *.sh
-
-> ./WRF-MOSIT.sh 2>&1 | tee WRF_MOSIT.log
-
-
----
-### Script Behavior and Installation Options
-
-Once the script is launched, it will perform the following checks and guide the user through a step-by-step installation process:
-
-#### Automatic Checks
-- Detects **system architecture type** (e.g., Intel, AMD).
-- Verifies **available storage space** meets minimum requirements.
-
-#### Interactive Installation Options
-
-Users will be prompted to configure the following options:
-
-1. **Compiler Selection**  
-   Choose which compiler to use:
-   - `Intel` – Offers improved performance on Intel CPUs. On non-Intel CPUs, performance gains are minimal or negligible.
-   - `GNU` – Broad compatibility and stability across most architectures.
-
-2. **Graphics Display Package**  
-   Select your preferred visualization software:
-   - `GrADS`
-   - `OpenGrADS`
-
-3. **Auto Configuration**  
-   Enable one-click install using default/recommended settings.
-   **Recommended:** `Yes`
-
-4. **Secondary WPS Geography Files**  
-   Download additional WPS geography datasets.  
-   **Recommended:** `Yes` (especially for full functionality)
-
-5. **Optional WPS Geography Files**  
-   Download optional datasets to enhance spatial resolution support.  
-   **Recommended:** `Yes`
-
-6. **WRF Software Selection**  
-   Choose which WRF-based model you want to install:
-   - `WRF`
-   - `WRF-CHEM`
-   - `WRF-Hydro`
-   - `WRF-Hydro Coupled`
-   - `WRF-CMAQ`
-   - `WRF-SFIRE`
-   - `COAWST`
+Both scripts are interactive: they detect your OS/architecture, ask what to
+install, then compile everything unattended. **Re-running is safe** — finished
+steps are detected and skipped (see *Idempotent re-runs*).
 
 ---
 
----
+# Part I — WRF-MOSIT (summary)
 
-### Conda Environments and Tools
+Mature bash installer for the WRF ecosystem on:
 
-The WRF-MOSIT installation includes several pre-configured **Conda environments** to support post-processing, visualization, and scripting tools commonly used with WRF output. These are automatically installed during setup:
+- Linux Debian family (Ubuntu, Mint, Pop!_OS, …) — GNU and Intel
+- Linux Fedora family (CentOS, Rocky, RHEL, Alma) — GNU and Intel
+- macOS (Homebrew) — GNU only
+- Windows Subsystem for Linux (Debian/Ubuntu/Mint)
 
-| Environment Name | Path | Purpose |
-|------------------|------|---------|
-| `cdo_stable`     | `$HOME/<WRF software name>/miniconda3/envs/cdo_stable` | Environment for **Climate Data Operators (CDO)** – a collection of command-line tools for manipulating and analyzing climate and forecast model data. |
-| `ncl_stable`     | `$HOME/<WRF software name>/miniconda3/envs/ncl_stable` | Environment for **NCAR Command Language (NCL)** – used for advanced scientific visualization and analysis of atmospheric data. |
-| `wrf-python`     | `$HOME/<WRF software name>/miniconda3/envs/wrf-python` | Environment for **WRF-Python** – a Python package for post-processing WRF model output using NumPy and Matplotlib-compatible interfaces. |
-| `wrfh_gis_env`     | `$HOME/<WRF software name>/miniconda3/envs/wrfh_gis_env` | Environment for **WRF-GIS-Preprocessor** – The WRF-Hydro GIS Pre-processor provides various scripts and tools for building the geospatial input files for running a WRF-Hydro simulation. |
+### Models (one per run)
 
-> These environments ensure tool stability and avoid dependency conflicts by isolating the tools in their own environments. You can activate them using:
+| Model | Notes |
+| ----- | ----- |
+| WRF-ARW v4.8.0 | core atmosphere model + WPS v4.7.0, basic nesting set up |
+| WRF-Chem v4.8.0 | chemistry w/ KPP + WPS + Prep-Chem-SRC (GNU) |
+| WRF-Hydro Standalone v5.4 | hydrology model |
+| WRF-Hydro Coupled v5.4 | WRF v4.8.0 coupled with WRF-Hydro |
+| WRF-CMAQ (CMAQ v5.5) | WRF v4.5.0 + CMAQ + WPS |
+| WRF-SFIRE v2 | wildland fire (WPS v4.2) |
+| COAWST | coupled ocean-atmosphere-wave-sediment transport |
 
-conda activate *environment_name*
+Compiler support: GNU on all platforms; Intel on Linux x86_64 (CMAQ/SFIRE are
+GNU only).
 
+### Libraries / pre-post tools
 
----
+zlib 1.3.2 · MPICH 5.0.1 · libpng 1.6.58 · JasPer 1900.1 · HDF5/PHDF5 1.14.6 ·
+Parallel-NetCDF 1.14.1 · NetCDF-C 4.10.0 · NetCDF-Fortran 4.6.2 · NetCDF-CXX
+4.3.1 · MET 12.2.1 / METplus 6.2.1 · WRF-Python, NCL, CDO (conda) ·
+GrADS/OpenGrADS · WRF-GIS-Preprocessor (Hydro).
 
-### Exports to run WRF and WPS programs
-- GNU Compilers
+Conda envs created: `cdo_stable`, `ncl_stable`, `wrf-python`, `wrfh_gis_env`
+(under `$HOME/<WRF folder>/miniconda3`).
 
-    > export LD_LIBRARY_PATH=$HOME/WRF/Libs/NETCDF/lib:$LD_LIBRARY_PATH
+### Requirements
 
-    > export LD_LIBRARY_PATH=$HOME/WRF/Libs/grib2/lib:$LD_LIBRARY_PATH
+~350 GB free disk, ≥16 GB RAM, ≥8 cores. Estimated runtime **60–120 min** at
+10 Mbps (Intel slower). Install folder: `$HOME/<WRF|WRF_CHEM|WRFHYDRO|
+WRF_COUPLED|WRF_SFIRE|WRF_CMAQ|COAWST>` (plus `_Intel` suffix for Intel).
 
-    > export PATH=$HOME/WRF/Libs/MPICH/bin:$PATH
+WRF runtime exports (GNU):
 
-    > export PATH=$HOME/WRF/Libs/grib2/lib:$PATH
-    
-    > export PATH=$HOME/WRF/GrADS/Contents:$PATH
+```bash
+export LD_LIBRARY_PATH=$HOME/WRF/Libs/NETCDF/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$HOME/WRF/Libs/grib2/lib:$LD_LIBRARY_PATH
+export PATH=$HOME/WRF/Libs/MPICH/bin:$PATH
+export PATH=$HOME/WRF/GrADS/Contents:$PATH
+```
 
-
-
-
-- Intel Compilers
-
-    > source /opt/intel/oneapi/setvars.sh
-
-    > export LD_LIBRARY_PATH=$HOME/WRF_Intel/Libs/NETCDF/lib:$LD_LIBRARY_PATH
-
-    > export LD_LIBRARY_PATH=$HOME/WRF_Intel/Libs/grib2/lib:$LD_LIBRARY_PATH
-
-    > export PATH=$HOME/WRF_Intel/Libs/grib2/lib:$PATH
-       
-    > export PATH=$HOME/WRF_Intel/GrADS/Contents:$PATH
-
-
-- Make sure to change the name of the WRF Folder to whichever version you are using, WRF_CHEM, WRFHYDRO, etc.
-
-
+Intel additionally: `source /opt/intel/oneapi/setvars.sh`.
 
 ---
 
-  ##### *** Tested on Ubuntu 22.04.4 LTS, Ubuntu 24.04.3 LTS, MacOS Ventura, MacOS Sonoma, Centos8, Rocky Linux 9, Windows Sub-Linux Ubuntu***
-- Built 64-bit system.
-- Tested with current available libraries on 11/01/2025, exceptions have been noted in the script documentation.
----
+# Part II — MPAS-MOSIT (new)
 
-#### Estimated Run Time ~ 60 to 120 Minutes @ 10mbps download speed.
-- Intel compilers take slightly more time to install packages.
----
-### Special thanks to the following people for contributions to code and advising:
-- University of Zadar's Ivan T. - Youtube's meteoadriatic
-- GitHub user jamal919
-- University of Manchester's  Doug L.
-- Institute of Water & Flood Management (BUET)'s Yeamin R., Saiful Islam F.
-- University of Tunis El Manar's Hosni S.
-- GSL's Jordan S.
-- NCAR's Mary B., Christine W., Soren R., & Carl D.
-- DTC's Tara J., Julie P., George M., & John H.
-- UCAR's Katelyn F., Jim B., Jordan P., Kevin M.,
----
-#### Citation:
-#### Hatheway, W., Snoun, H., ur Rehman, H. et al. WRF-MOSIT: a modular and cross-platform tool for configuring and installing the WRF model. Earth Sci Inform (2023). https://doi.org/10.1007/s12145-023-01136-y
----
-#### References:
-Appel KW, Gilliam RC, Davis N, Zubrow A, Howard SC (2011) Overview of the atmospheric model evaluation tool (AMET) v1.1 for evaluating meteorological and air quality models. Environ Model Softw 26:434–443. https://doi.org/10.1016/J.ENVSOFT.2010.09.007
-Article Google Scholar 
+Interactive installer for the **Model for Prediction Across Scales (MPAS)**
+(<https://github.com/MPAS-Dev/MPAS-Model>), same MOSIT design:
+source-compiled dependencies, per-component menus, isolated install folder,
+managed `~/.bashrc` block.
 
-Brousse O, Martilli A, Foley M, Mills G, Bechtel B (2016) WUDAPT, an efficient land use producing data tool for mesoscale models? Integration of urban LCZ in WRF over Madrid. Urban Clim 17:116–134. https://doi.org/10.1016/J.UCLIM.2016.04.001
-Article Google Scholar 
+## 1. Core dependencies (compiled from source)
 
-Brown B, Jensen T, Gotway JH, Bullock R, Gilleland E, Fowler T, Newman K, Adriaansen D, Blank L, Burek T, Harrold M, Hertneky T, Kalb C, Kucera P, Nance L, Opatz J, Vigh J, Wolff J (2021) The model evaluation tools (MET): more than a decade of community-supported forecast verification. Bull Am Meteorol Soc 102:E782–E807. https://doi.org/10.1175/BAMS-D-19-0093.1
-Article Google Scholar 
+Installed under `~/MPAS_GNU/Libs/` (`~/MPAS_Intel/Libs/` for Intel), built in
+this order:
 
-Carslaw DC, Ropkins K (2012) Openair — an R package for air quality data analysis. Environ Model Softw 27–28. https://doi.org/10.1016/J.ENVSOFT.2011.09.008
-Chang V (2017) Towards data analysis for weather cloud computing. Knowl-Based Syst 127:29–45. https://doi.org/10.1016/J.KNOSYS.2017.03.003
-Article Google Scholar 
+| Library | Version | Notes |
+| ------- | ------- | ----- |
+| zlib | 1.3.2 | compression |
+| MPICH | 5.0.1 | MPI; `mpicc`/`mpifort` in `Libs/MPICH` |
+| HDF5 | 1.14.6 | parallel + Fortran, built with MPI wrappers |
+| Parallel-NetCDF | 1.14.1 | **required by every MPAS core** |
+| NetCDF-C | 4.10.0 | pnetcdf/cdf5/parallel/NETCDF4 enabled |
+| NetCDF-Fortran | 4.6.2 | same prefix (`Libs/NETCDF`) |
+| METIS | 5.1.0 | provides `gpmetis` (mesh partitioning) |
 
-Coen JL, Cameron M, Michalakes J, Patton EG, Riggan PJ, Yedinak KM (2013) WRF-Fire: coupled Weather–Wildland Fire modeling with the weather research and forecasting model. J Appl Meteorol Climatol 52:16–38. https://doi.org/10.1175/JAMC-D-12-023.1
-Article Google Scholar 
+After the libraries, two runtime compatibility tests are compiled and executed:
+a parallel `pnetcdf_test` (via `mpirun -np 1`) and a `netcdf_fortran_test`.
+Failures prompt before continuing.
 
-Fast JD, Gustafson WI, Easter RC, Zaveri RA, Barnard JC, Chapman EG, Grell GA, Peckham SE (2006) Evolution of ozone, particulates, and aerosol direct radiative forcing in the vicinity of Houston using a fully coupled meteorology-chemistry-aerosol model. J Geophys Res Atmos 111. https://doi.org/10.1029/2005JD006721
-Grell GA, Peckham SE, Schmitz R, McKeen SA, Frost G, Skamarock WC, Eder B (2005) Fully coupled online chemistry within the WRF model. Atmos Environ 39:6957–6975. https://doi.org/10.1016/J.ATMOSENV.2005.04.027
-Article Google Scholar 
+## 2. MPAS-Model v8.4.2 — core selection menu
 
-Hluchy L (2016) Software support for the execution of WRF (Weather Research and Forecasting) simulations on HPC infrastructures. https://doi.org/10.1109/eScience.2016.7870932
-Hoste K, Timmerman J, Georges A, Weirdt S, D (2012) Easybuild: building software with ease. Proc – 2012 SC Companion High Perform. Comput Netw Storage Anal SCC 2012:572–582. https://doi.org/10.1109/SC.COMPANION.2012.81
-Maharjan A, Shakya A (2022) Enhancement of WRF Model using CUDA. Interdiscip J Innov Nepal Acad 1:16–22. https://doi.org/10.3126/IDJINA.V1I1.51963
-Article Google Scholar 
+| Menu | Builds | Executable(s) |
+| ---- | ------ | ------------- |
+| 1 MPAS-Atmosphere | atmosphere + preprocessor | `atmosphere_model`, `init_atmosphere_model` |
+| 2 MPAS-Ocean      | ocean (fetches CVMix + BGC during build) | `ocean_model` |
+| 3 MPAS-Seaice     | sea ice | `seaice_model` |
+| 4 MPAS-Albany Land Ice | land ice | `landice_model` |
+| 5 MPAS-ALL        | everything above | all |
+| 6 MPAS-JEDI only  | all cores + JEDI | all + JEDI |
 
-McCaslin et al (2004) 14.4 A Graphical User Interface to Prepare the Standard Initialization for WRF (2004–84Annual_20waf16nw) [WWW Document]. https://ams.confex.com/ams/84Annual/techprogram/paper_69852.htm. Accessed 3.7.23
-Meyer D, Riechert M (2019) Open source QGIS toolkit for the advanced research WRF modeling system. Environ Model Softw 112:166–178. https://doi.org/10.1016/J.ENVSOFT.2018.10.018
-Article Google Scholar 
+Build actually executed:
+`make -j<N> gnu CORE=<core> PRECISION=<single|double>` (Intel = `intel` target,
+**experimental**, needs oneAPI `icx`/`ifx`).
 
-Muñoz-Esparza D, Kosović B, Jiménez PA, Coen JL (2018) An accurate fire-spread algorithm in the weather research and forecasting model using the level-set method. J Adv Model Earth Syst 10:908–926. https://doi.org/10.1002/2017MS001108
-Article Google Scholar 
+- **PRECISION**: `single` recommended for Atmosphere; `double` is **required**
+  for MPAS-JEDI (the script prompts for it).
+- On failure a core is retried with `AUTOCLEAN=true`, then rebuilt once more.
+- Each executable is copied to `~/MPAS_GNU/bin/` along with the physics tables
+  (`*TBL`, `*DATA*`, `.DBL` variants for double precision) and the generated
+  default `namelist.*`/`streams.*`.
 
-National Oceanic and Atmospheric Administration (NOAA) (2021) WRF User’s Guide. Retrieved from https://www2.mmm.ucar.edu/wrf/users/docs/user_guide_V4/user_guide_V4.3.pdf. Accessed 2021
-Nikfal A (2023) PostWRF: interactive tools for the visualization of the WRF and ERA5 model outputs. Environ Model Softw 160:105591. https://doi.org/10.1016/J.ENVSOFT.2022.105591
-Article Google Scholar 
+## 3. Optional components (Yes/No prompts)
 
-Sanyal J, Zhang S, Dyer J, Mercer A, Amburn P, Moorhead R (2010) Noodles: a tool for visualization of numerical weather model ensemble uncertainty. IEEE Trans Vis Comput Graph 16:1421–1430. https://doi.org/10.1109/TVCG.2010.181
-Article Google Scholar 
+| Component | What you get | Location |
+| --------- | ------------ | -------- |
+| Metis (`gpmetis`) | runtime partitioner for parallel runs | `~/MPAS_GNU/Libs/METIS/bin` |
+| MPAS-Limited-Area | `create_region`, `create_initial_state` for regional runs | `~/MPAS_GNU/tools/MPAS-Limited-Area` (on PATH) |
+| Python tooling | `mpas_tools`, `geometric_features`, `pyremap` | conda env **`mpas`** (conda-forge) when conda/mamba exists, otherwise repo clones + venv in `tools/venv-mpas` |
+| Static datasets | MPAS-Data clone + `mpas_static.tar.bz2` (~2.2 GB static fields) + `QNWFA_QNIFA_SIGMA_MONTHLY.dat` (~215 MB aerosols) | `~/MPAS_GNU/data/` |
+| MPAS-JEDI | data-assimilation stack (below) | `~/MPAS_GNU/jedi/` |
 
-Shi J, Wu Z, Lu G, Li Y (2013) Design and application of WRF computing platform based on B/S structure. Proc – 2013 Int Conf Mechatron Sci Electr Eng Comput MEC 2013:1804–1807. https://doi.org/10.1109/MEC.2013.6885345
-Skamarock WC, Klemp JB, Dudhia J, Gill DO, Barker DM, Wang W, Powers JG (2008) A description of the advanced research WRF version 3. NCAR/TN. https://doi.org/10.5065/D68S4MVH
-Skamarock C, Klemp B, Dudhia J, Gill O, Liu Z, Berner J, Wang W, Powers G, Duda G, Barker D, Huang X (2021) A Description of the Advanced Research WRF Model Version 4.3. https://doi.org/10.5065/1DFH-6P97
-Wang YQ (2014) MeteoInfo: GIS software for meteorological data visualization and analysis. Meteorol Appl 21:360–368. https://doi.org/10.1002/MET.1345
+## 4. MPAS-JEDI (EXPERIMENTAL)
 
+Installed through the JCSDA [mpas-bundle](https://github.com/JCSDA/mpas-bundle)
+ecbuild superbuild inside a dedicated conda env **`jedi`** (python, cmake/ninja,
+eckit, fckit, ecbuild, atlas, oops, vader, saber, ioda, ufo, crtm from
+conda-forge). If no conda is found, **Miniforge** is installed silently into
+`~/MPAS_GNU/tools/miniforge3`.
 
----
-<a href="https://mapmyvisitors.com/web/1c3c7" title="Visit tracker"><img src="https://mapmyvisitors.com/map.png?d=VEl6Lzc3EaQ6Q40NtdiE4DNO0cseBQsoEMLGzJuSiv8&cl=ffffff"></a>
+- Requires MPAS built in **double precision** (`-DMPAS_DOUBLE_PRECISION=ON`);
+  `git-lfs` is installed if missing.
+- The bundle clones `MPAS-Model` (develop) into the build tree itself.
+- JEDI failures are **warnings only** — the model install still completes.
+  Expect long builds; afterwards run
+  `ctest --output-on-failure` in `~/MPAS_GNU/jedi/mpas-bundle-build`.
+
+## Folder layout
+
+```
+~/MPAS_GNU/                    (or ~/MPAS_Intel/)
+├── Downloads/                 source tarballs (kept for re-runs)
+├── Libs/
+│   ├── base/                  zlib + HDF5 + PnetCDF     ($PNETCDF, $HDF5)
+│   ├── NETCDF/                NetCDF-C + NetCDF-Fortran ($NETCDF)
+│   ├── MPICH/                 MPI compilers + mpirun
+│   └── METIS/                 gpmetis and friends
+├── bin/                       <core>_model executables + physics tables (on PATH)
+├── Logs/                      per-step build logs (check these first)
+├── tests/compat/              PnetCDF / NetCDF-Fortran compatibility tests
+├── data/                      MPAS-Data, mpas_static/, QNWFA file
+├── tools/                     MPAS-Limited-Area, MPAS-Tools, geometric_features,
+│                              pyremap, venv-mpas, miniforge3 (if JEDI)
+└── jedi/                      mpas-bundle src + mpas-bundle-build
+```
+
+## Environment (`~/.bashrc` managed block)
+
+Between `# BEGIN/END MPAS-MOSIT v1.0.0 exports` the script maintains:
+
+```bash
+export MPAS_FOLDER="$HOME/MPAS_GNU"
+export NETCDF="$MPAS_FOLDER/Libs/NETCDF"
+export PNETCDF="$MPAS_FOLDER/Libs/base"
+export HDF5="$MPAS_FOLDER/Libs/base"
+export MPAS_EXE_DIR="$MPAS_FOLDER/bin"
+export PATH="$MPAS_FOLDER/bin:$MPAS_FOLDER/Libs/MPICH/bin:$PATH"
+export PATH="$MPAS_FOLDER/Libs/METIS/bin:$PATH"          # if Metis selected
+export LD_LIBRARY_PATH="$MPAS_FOLDER/Libs/base/lib:$NETCDF/lib:$MPAS_FOLDER/Libs/MPICH/lib:..."
+export MPAS_LIMITED_AREA_DIR=...   # optional
+export MPAS_STATIC_DATA_DIR="$MPAS_FOLDER/data"   # optional
+export MPAS_JEDI_DIR="$MPAS_FOLDER/jedi"          # optional
+```
+
+Open a **new terminal** (or `source ~/.bashrc`) after each run.
+
+## Running MPAS
+
+1. **Partition the mesh** for N MPI tasks (runtime step):
+
+   ```bash
+   gpmetis -minconn -contig -niter=200 <case>.graph.info 16   # -> <case>.graph.info.16
+   ```
+
+   `*.graph.info` files ship with MPAS-Model example/test cases.
+
+2. **Execute** from a run directory containing the exe, the case `.nc` files and
+   `namelist.*`/`streams.*`:
+
+   ```bash
+   mpirun -np 16 atmosphere_model    # or ocean_model / seaice_model / landice_model
+   ```
+
+3. **Atmosphere workflow**: `init_atmosphere_model` first (converts the
+   initial-condition file), then `atmosphere_model`. Real cases need the static
+   fields from `~/MPAS_GNU/data` and the aerosol climatology file.
+
+4. **Limited area**: `create_region region.pts global_grid.nc` (polygon must be
+   convex for `grid.nc` subsets) → `create_initial_state ...`; see the
+   MPAS-Limited-Area README.
+
+5. **Python tools**: `conda activate mpas` (or source `tools/venv-mpas`) to use
+   `mpas_tools`, `geometric_features`, `pyremap` (`pyremap` full remapping needs
+   `esmpy`, best from conda-forge).
+
+## Idempotent re-runs
+
+Every expensive step records a marker and is skipped later:
+
+| Step | Skipped when |
+| ---- | ------------ |
+| Dependency library | installed marker exists (`Libs/base/include/pnetcdf.h`, `Libs/NETCDF/lib/libnetcdf.so`, `Libs/MPICH/bin/mpicc`, …) |
+| METIS | `Libs/METIS/bin/gpmetis` exists |
+| MPAS core | `bin/<exe>` exists — force with `MPAS_FORCE_REBUILD=1 ./MPAS-MOSIT.sh` |
+| MPAS-Model clone / static data / tools | already cloned/downloaded |
+| conda envs `mpas`, `jedi` | listed by `conda env list` |
+| `~/.bashrc` block | replaced in place, never duplicated |
+
+So recovering from any failure = fix the cause and run the script again.
+
+## Troubleshooting & verified quirks
+
+- **CMake ≥ 4 vs METIS 5.1.0**: upstream METIS uses
+  `cmake_minimum_required(VERSION 2.8)` and a relative `try_compile` path that
+  CMake 4 rejects. The script patches `CMakeLists.txt` and configures with
+  `-DCMAKE_POLICY_VERSION_MINIMUM=3.5` and an **absolute** `-DGKLIB_PATH` —
+  do the same for manual builds.
+- **Official METIS mirrors are dead** (glaros/INRIA etc.); the Metis sources
+  come from the Debian orig mirror (`deb.debian.org/.../metis_5.1.0.dfsg.orig.tar.xz`).
+- **`conda create` → `MultipleKeysError`**: remove duplicate `auto_activate_base:`
+  / `auto_activate:` from `~/.condarc` (keep one).
+- **Intel compiler path is experimental** (oneAPI `icx`/`icpx`/`ifx`); GNU is
+  the tested route.
+- Logs to check: `~/MPAS_GNU/Logs/<lib>/{configure,make,make.install}.log`,
+  `~/MPAS_GNU/Logs/build_core_<core>.log`,
+  `~/MPAS_GNU/Logs/{METIS_build,pnetcdf_test,netcdf_fortran_test}.log`,
+  `~/MPAS_GNU/Logs/{conda_env_mpas,conda_env_jedi,jedi_cmake,jedi_make}.log`.
+- The **ocean** core is slower: it downloads CVMix/BGC sources at first build.
+- The script deactivates any active conda env at start to keep the model build
+  clean, and clears the sudo password from the environment after installs.
+
+## System requirements & timing (MPAS-MOSIT)
+
+- 64-bit Linux (x86_64/aarch64; Debian/Ubuntu & Fedora/RHEL families), ≥ 50 GB
+  free disk, ≥ 16 GB RAM, ≥ 4 cores (uses half of `nproc` for `make -j`).
+- Approximate wall time on an 8-core laptop: dependencies 25–45 min ·
+  each core 10–30 min (ocean longest) · static datasets ≈ 2.4 GB download ·
+  JEDI + mpas-bundle +30–90 min (flakiest part, never blocks the install).
+- Verified on: Pop!_OS 22.04 (Ubuntu 22.04 base), x86_64, GNU 11.4, CMake 4.4,
+  8 cores / 16 GB RAM — atmosphere (double precision) ✓, pnetcdf &
+  netcdf-fortran compat tests ✓, gpmetis ✓, `gpmetics`/conda env flows ✓.
+
+## References
+
+- MPAS: <https://mpas-dev.github.io> · Ringler et al. (2020) *Computer Physics
+  Communications* (MPAS core) and the core-specific papers (atmosphere:
+  Skamarock et al. 2012 *MWR*; ocean: Petersen et al. 2020 *Ocean Modelling*;
+  land ice: Price et al. 2019 *GMD*; sea ice: Liu et al. 2018 *JAMES*).
+- MPAS-JEDI / JEDI: <https://jcda.org> · JCSDA (2020) *QJRMS* JEDI OSS.
+- MPAS-Limited-Area: <https://github.com/MPAS-Dev/MPAS-Limited-Area>.
+- METIS: Karypis, G. (2013) METIS 5.1.0, University of Minnesota.
+
+### Citation
+
+Hatheway, W., Snoun, H., ur Rehman, H., & Mwanthi, A. W. (2023). WRF-MOSIT: a
+modular and cross-platform tool for configuring and installing the WRF model.
+*Earth Science Informatics*. <https://doi.org/10.1007/s12145-023-01136-y>
+
+MPAS-MOSIT reuses that toolkit design; when publishing, also cite the MPAS
+project and, if used, JCSDA/JEDI.
+
+### Special thanks (preserved from the WRF-MOSIT project)
+
+University of Zadar's Ivan T. (meteoadriatic) · GitHub user jamal919 ·
+University of Manchester's Doug L. · Institute of Water & Flood Management
+(BUET)'s Yeamin R., Saiful Islam F. · University of Tunis El Manar's Hosni S. ·
+GSL's Jordan S. · NCAR's Mary B., Christine W., Soren R., Carl D. · DTC's
+Tara J., Julie P., George M., John H. · UCAR's Katelyn F., Jim B., Jordan P.,
+Kevin M.
